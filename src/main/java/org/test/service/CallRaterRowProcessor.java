@@ -2,18 +2,18 @@ package org.test.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.test.domain.CallDestination;
-import org.test.factory.CallDestinationFactory;
+import org.test.domain.CallInformation;
+import org.test.factory.CallInformationFactory;
 
 @Component
 public class CallRaterRowProcessor {
 
     @Autowired
-    private CallDestinationFactory callDestinationFactory;
+    private CallInformationFactory callInformationFactory;
 
     public String processRow(String rowFromFile) {
 
-        CallDestination callDestination = callDestinationFactory.create(rowFromFile);
+        CallInformation callInformation = callInformationFactory.create(rowFromFile);
 
         return null;
 

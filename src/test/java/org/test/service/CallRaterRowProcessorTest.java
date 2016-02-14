@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.test.factory.CallDestinationFactory;
+import org.test.factory.CallInformationFactory;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 public class CallRaterRowProcessorTest {
 
     @Mock
-    private CallDestinationFactory callDestinationFactory;
+    private CallInformationFactory callInformationFactory;
 
     @InjectMocks
     private CallRaterRowProcessor callRaterRowProcessor;
@@ -24,7 +24,7 @@ public class CallRaterRowProcessorTest {
 
         String testString = "testString";
         callRaterRowProcessor.processRow(testString);
-        verify(callDestinationFactory, times(1)).create(testString);
+        verify(callInformationFactory, times(1)).create(testString);
     }
 
 }
