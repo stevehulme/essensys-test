@@ -5,28 +5,33 @@ import org.test.domain.CallDestination;
 import org.test.domain.CallInformation;
 import org.test.domain.TimeBand;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Component
 public class CallInformationFactory {
 
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    public CallInformation create(String rowFromFile) {
+    public Optional<CallInformation> create(String rowFromFile) {
 
         String[] parameters = rowFromFile.split(",");
 
-        CallDestination callDestination = CallDestination.valueOf(parameters[5].replace(" ", "_"));
-        TimeBand timeBand = TimeBand.valueOf(parameters[6]);
-        
-        return new CallInformation(parameters[0], parameters[1], LocalDate.parse(parameters[2], DATE_FORMAT), LocalTime.parse(parameters[3]),
-                getLengthFromString(parameters[4]), callDestination, timeBand);
+        if (parameters.length != 7) {
+            return Optional.empty();
+        }
+
+        CallDestination callDestination;
+        TimeBand timeBand;
+        try {
+            callDestination = CallDestination.valueOf(parameters[5].replace(" ", "_"));
+            timeBand = TimeBand.valueOf(parameters[6]);
+        }
+        catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
+
+        CallInformation callInformation = new CallInformation(parameters[0], parameters[1], parameters[2], parameters[3],
+                parameters[4], callDestination, timeBand);
+        return Optional.of(callInformation);
     }
 
-    private int getLengthFromString(String parameter) {
-        return Integer.valueOf(parameter.replace(":", ""));
-    }
 }
 

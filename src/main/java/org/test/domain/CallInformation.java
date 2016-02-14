@@ -1,19 +1,16 @@
 package org.test.domain;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 public class CallInformation {
 
     private final String customerCLI;
     private final String telephoneNumber;
-    private final LocalDate callDate;
-    private final LocalTime callTime;
-    private final int duration;
+    private final String callDate;
+    private final String callTime;
+    private final String duration;
     private final CallDestination callDestination;
     private final TimeBand timeBand;
 
-    public CallInformation(String customerCLI, String telephoneNumber, LocalDate callDate, LocalTime callTime, int duration, CallDestination callDestination, TimeBand timeBand) {
+    public CallInformation(String customerCLI, String telephoneNumber, String callDate, String callTime, String duration, CallDestination callDestination, TimeBand timeBand) {
         this.customerCLI = customerCLI;
         this.telephoneNumber = telephoneNumber;
         this.callDate = callDate;
@@ -31,15 +28,15 @@ public class CallInformation {
         return telephoneNumber;
     }
 
-    public LocalDate getCallDate() {
+    public String getCallDate() {
         return callDate;
     }
 
-    public LocalTime getCallTime() {
+    public String getCallTime() {
         return callTime;
     }
 
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 
@@ -58,12 +55,12 @@ public class CallInformation {
 
         CallInformation that = (CallInformation) o;
 
-        if (duration != that.duration) return false;
         if (customerCLI != null ? !customerCLI.equals(that.customerCLI) : that.customerCLI != null) return false;
         if (telephoneNumber != null ? !telephoneNumber.equals(that.telephoneNumber) : that.telephoneNumber != null)
             return false;
         if (callDate != null ? !callDate.equals(that.callDate) : that.callDate != null) return false;
         if (callTime != null ? !callTime.equals(that.callTime) : that.callTime != null) return false;
+        if (duration != null ? !duration.equals(that.duration) : that.duration != null) return false;
         if (callDestination != that.callDestination) return false;
         return timeBand == that.timeBand;
 
@@ -75,9 +72,10 @@ public class CallInformation {
         result = 31 * result + (telephoneNumber != null ? telephoneNumber.hashCode() : 0);
         result = 31 * result + (callDate != null ? callDate.hashCode() : 0);
         result = 31 * result + (callTime != null ? callTime.hashCode() : 0);
-        result = 31 * result + duration;
+        result = 31 * result + (duration != null ? duration.hashCode() : 0);
         result = 31 * result + (callDestination != null ? callDestination.hashCode() : 0);
         result = 31 * result + (timeBand != null ? timeBand.hashCode() : 0);
         return result;
     }
+
 }

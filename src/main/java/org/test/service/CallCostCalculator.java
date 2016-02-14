@@ -7,7 +7,8 @@ import org.test.domain.CallInformation;
 import org.test.domain.TimeBand;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class CallCostCalculator {
@@ -27,7 +28,7 @@ public class CallCostCalculator {
             finalCost = BigDecimal.valueOf(lowestPrice);
         }
         else {
-            double calculatedCost = costPerMinute / 60 * callInformation.getDuration();
+            double calculatedCost = costPerMinute / 60 * getLengthFromString(callInformation.getDuration());
 
             finalCost = calculatedCost < lowestPrice ? BigDecimal.valueOf(lowestPrice) : BigDecimal.valueOf(calculatedCost);
         }
@@ -42,5 +43,10 @@ public class CallCostCalculator {
         double peakCost = callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), TimeBand.Peak);
         return peakCost * (1 + costForCallDestinationAndTimeBand);
 
+    }
+
+    private int getLengthFromString(String callLength) {
+        LocalTime localTime = LocalTime.parse(callLength, DateTimeFormatter.ISO_LOCAL_TIME);
+        return localTime.toSecondOfDay();
     }
 }

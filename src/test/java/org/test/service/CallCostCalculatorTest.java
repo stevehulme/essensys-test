@@ -29,20 +29,20 @@ public class CallCostCalculatorTest {
     public void testCalculatePeakCostOverMinimum() {
 
         CallInformation callInformation = mock(CallInformation.class);
-        when(callInformation.getDuration()).thenReturn(90);
+        when(callInformation.getDuration()).thenReturn("02:10:30");
         when(callInformation.getCallDestination()).thenReturn(CallDestination.CANADA);
         when(callInformation.getTimeBand()).thenReturn(TimeBand.Peak);
         when(callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), callInformation.getTimeBand())).thenReturn(10.0);
 
         BigDecimal cost = callCostCalculator.calculateCost(callInformation);
-        assertEquals(cost, BigDecimal.valueOf(15.0));
+        assertEquals(cost, BigDecimal.valueOf(1305.0));
     }
 
     @Test
     public void testCalculateZeroCost() {
 
         CallInformation callInformation = mock(CallInformation.class);
-        when(callInformation.getDuration()).thenReturn(60);
+        when(callInformation.getDuration()).thenReturn("00:01:00");
         when(callInformation.getCallDestination()).thenReturn(CallDestination.CANADA);
         when(callInformation.getTimeBand()).thenReturn(TimeBand.Peak);
         when(callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), callInformation.getTimeBand())).thenReturn(0.0);
@@ -55,7 +55,7 @@ public class CallCostCalculatorTest {
     public void testCalculateBelowMinimumCost() {
 
         CallInformation callInformation = mock(CallInformation.class);
-        when(callInformation.getDuration()).thenReturn(60);
+        when(callInformation.getDuration()).thenReturn("00:01:00");
         when(callInformation.getCallDestination()).thenReturn(CallDestination.CANADA);
         when(callInformation.getTimeBand()).thenReturn(TimeBand.Peak);
         when(callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), callInformation.getTimeBand())).thenReturn(3.0);
@@ -68,7 +68,7 @@ public class CallCostCalculatorTest {
     public void testCalculateCostWithDiscount() {
 
         CallInformation callInformation = mock(CallInformation.class);
-        when(callInformation.getDuration()).thenReturn(60);
+        when(callInformation.getDuration()).thenReturn("00:01:00");
         when(callInformation.getCallDestination()).thenReturn(CallDestination.CANADA);
         when(callInformation.getTimeBand()).thenReturn(TimeBand.Offpeak);
         when(callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), callInformation.getTimeBand())).thenReturn(-0.1);

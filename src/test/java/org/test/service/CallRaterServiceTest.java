@@ -9,6 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
@@ -30,6 +31,7 @@ public class CallRaterServiceTest {
         Path path = mock(Path.class);
         Stream<String> streamOfLines = Arrays.asList("string1", "string2", "string3").stream();
         when(filesWrapper.getLines(path)).thenReturn(streamOfLines);
+        when(callRaterRowProcessor.processRow(anyString())).thenReturn(Optional.of("testString"));
         callRaterService.rateData(path);
         verify(callRaterRowProcessor, times(1)).processRow("string1");
         verify(callRaterRowProcessor, times(1)).processRow("string2");
