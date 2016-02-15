@@ -20,8 +20,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CallRaterRowProcessorTest {
 
-    @Mock
-    private CallInformationFactory callInformationFactory;
 
     @Mock
     private CallCostCalculator callCostCalculator;
@@ -41,39 +39,19 @@ public class CallRaterRowProcessorTest {
         String testString = "testString";
         String expectedString = testString + "12.0";
         CallInformation callInformation = mock(CallInformation.class);
-        when(callInformationFactory.create(testString)).thenReturn(Optional.of(callInformation));
         BigDecimal cost = mock(BigDecimal.class);
         when(callCostCalculator.calculateCost(callInformation)).thenReturn(cost);
         CallInformationWithCost callInformationWithCost = mock(CallInformationWithCost.class);
         when(callInformationWIthCostFactory.create(callInformation, cost)).thenReturn(callInformationWithCost);
         when(callInformationWIthCostSerialiser.toString(callInformationWithCost)).thenReturn(expectedString);
 
-        Optional<String> returnedString = callRaterRowProcessor.processRow(testString);
+        String returnedString = callRaterRowProcessor.processRow(callInformation);
 
-        assertEquals(expectedString, returnedString.get());
+        assertEquals(expectedString, returnedString);
 
-        verify(callInformationFactory, times(1)).create(testString);
         verify(callCostCalculator, times(1)).calculateCost(callInformation);
         verify(callInformationWIthCostFactory, times(1)).create(callInformation, cost);
         verify(callInformationWIthCostSerialiser, times(1)).toString(callInformationWithCost);
-    }
-
-    @Test
-    public void testProcessRowInvalidRow() {
-
-        String testString = "testString";
-        CallInformation callInformation = mock(CallInformation.class);
-        when(callInformationFactory.create(testString)).thenReturn(Optional.empty());
-
-
-        Optional<String> returnedString = callRaterRowProcessor.processRow(testString);
-
-        assertTrue(!returnedString.isPresent());
-
-        verify(callInformationFactory, times(1)).create(testString);
-        verify(callCostCalculator, times(0)).calculateCost(callInformation);
-        verify(callInformationWIthCostFactory, times(0)).create(any(CallInformation.class), any(BigDecimal.class));
-        verify(callInformationWIthCostSerialiser, times(0)).toString(any(CallInformationWithCost.class));
     }
 
 }

@@ -70,7 +70,7 @@ public class CallCostCalculatorTest {
         CallInformation callInformation = mock(CallInformation.class);
         when(callInformation.getDuration()).thenReturn("00:01:00");
         when(callInformation.getCallDestination()).thenReturn(CallDestination.CANADA);
-        when(callInformation.getTimeBand()).thenReturn(TimeBand.Offpeak);
+        when(callInformation.getTimeBand()).thenReturn(TimeBand.OffPeak);
         when(callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), callInformation.getTimeBand())).thenReturn(-0.1);
         when(callCostMap.getCostForCallDestinationAndTimeBand(callInformation.getCallDestination(), TimeBand.Peak)).thenReturn(10.0);
 

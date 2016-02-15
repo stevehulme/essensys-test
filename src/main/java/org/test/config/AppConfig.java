@@ -46,7 +46,13 @@ public class AppConfig {
     }
 
     @Bean
-    public FilesWrapper filesWrapper() {
-        return new FilesWrapper();
+    public CallRaterProcessor callRaterProcessor() { return new CallRaterProcessor(); }
+
+    @Bean
+    public FilesReaderWrapper filesReaderWrapper() {
+        return new FilesReaderWrapper();
     }
+
+    @Bean
+    public FilesWriterWrapper filesWriterWrapper() { return  new FilesWriterWrapper();}
 }

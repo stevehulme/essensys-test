@@ -4,17 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.test.domain.CallInformation;
 import org.test.domain.CallInformationWithCost;
-import org.test.factory.CallInformationFactory;
 import org.test.factory.CallInformationWIthCostFactory;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Component
 public class CallRaterRowProcessor {
-
-    @Autowired
-    private CallInformationFactory callInformationFactory;
 
     @Autowired
     private CallCostCalculator callCostCalculator;
@@ -25,17 +20,13 @@ public class CallRaterRowProcessor {
     @Autowired
     private CallInformationWIthCostSerialiser callInformationWIthCostSerialiser;
 
-    public Optional<String> processRow(String rowFromFile) {
+    public String processRow(CallInformation callInformation) {
 
-        Optional<CallInformation> callInformation = callInformationFactory.create(rowFromFile);
+        BigDecimal cost = callCostCalculator.calculateCost(callInformation);
 
-        if (callInformation.isPresent()) {
-            BigDecimal cost = callCostCalculator.calculateCost(callInformation.get());
+        CallInformationWithCost callInformationWithCost = callInformationWIthCostFactory.create(callInformation, cost);
 
-            CallInformationWithCost callInformationWithCost = callInformationWIthCostFactory.create(callInformation.get(), cost);
+        return callInformationWIthCostSerialiser.toString(callInformationWithCost);
 
-            return Optional.of(callInformationWIthCostSerialiser.toString(callInformationWithCost));
-        }
-        return Optional.empty();
     }
 }

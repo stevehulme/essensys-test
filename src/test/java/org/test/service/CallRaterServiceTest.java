@@ -9,7 +9,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
@@ -18,25 +17,24 @@ import static org.mockito.Mockito.*;
 public class CallRaterServiceTest {
 
     @Mock
-    private CallRaterRowProcessor callRaterRowProcessor;
+    private CallRaterProcessor callRaterProcessor;
 
     @Mock
-    private FilesWrapper filesWrapper;
+    private FilesReaderWrapper filesReaderWrapper;
 
     @InjectMocks
     private CallRaterService callRaterService;
 
+
     @Test
     public void testRateData() throws IOException {
         Path path = mock(Path.class);
-        Stream<String> streamOfLines = Arrays.asList("string1", "string2", "string3").stream();
-        when(filesWrapper.getLines(path)).thenReturn(streamOfLines);
-        when(callRaterRowProcessor.processRow(anyString())).thenReturn(Optional.of("testString"));
+        Stream<String> streamOfLines = Arrays.asList("string1").stream();
+        when(filesReaderWrapper.getLines(path)).thenReturn(streamOfLines);
         callRaterService.rateData(path);
-        verify(callRaterRowProcessor, times(1)).processRow("string1");
-        verify(callRaterRowProcessor, times(1)).processRow("string2");
-        verify(callRaterRowProcessor, times(1)).processRow("string3");
-
+        verify(callRaterProcessor, times(1)).processStream(streamOfLines);
     }
+
+
 
 }

@@ -26,7 +26,7 @@ public class CallCostMap {
     private Map<TimeBand, Double> getTimeBandToPriceMap(double peak, double offpeak, double weekend) {
         return Collections.unmodifiableMap(Stream.of(
                 new AbstractMap.SimpleEntry<>(TimeBand.Peak, peak),
-                new AbstractMap.SimpleEntry<>(TimeBand.Offpeak, offpeak),
+                new AbstractMap.SimpleEntry<>(TimeBand.OffPeak, offpeak),
                 new AbstractMap.SimpleEntry<>(TimeBand.Weekend, weekend))
                .collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue())));
     }
