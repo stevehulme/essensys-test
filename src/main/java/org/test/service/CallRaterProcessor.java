@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 @Component
 public class CallRaterProcessor {
 
-
     @Autowired
     private CallRaterRowProcessor callRaterRowProcessor;
 
@@ -25,7 +24,6 @@ public class CallRaterProcessor {
 
     @Autowired
     private CallInformationFactory callInformationFactory;
-
 
     public void processStream(Stream<String> lines) throws IOException {
 
@@ -36,7 +34,6 @@ public class CallRaterProcessor {
 
         filesWriterWrapper.writeFile(success, FileSystems.getDefault().getPath("output.csv"));
         filesWriterWrapper.writeFile(failure, FileSystems.getDefault().getPath("unmatched.csv"));
-
     }
 
     private void processRow(String rowFromFile, List<String> success, List<String> failure) {
@@ -45,10 +42,9 @@ public class CallRaterProcessor {
 
         if (callInformation.isPresent()) {
             success.add(callRaterRowProcessor.processRow(callInformation.get()));
-        }
-        else {
+        } else {
             if (rowFromFile.startsWith("Customer")) {
-                success.add(rowFromFile  + ", Cost");
+                success.add(rowFromFile + ", Cost");
             }
             failure.add(rowFromFile);
         }
