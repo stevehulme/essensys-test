@@ -6,6 +6,7 @@ import org.test.data.CallCostMap;
 import org.test.factory.CallInformationFactory;
 import org.test.factory.CallInformationWIthCostFactory;
 import org.test.service.*;
+import org.test.service.CLI.CustomerCLIByDayProcessor;
 
 @Configuration
 public class AppConfig {
@@ -55,4 +56,7 @@ public class AppConfig {
 
     @Bean
     public FilesWriterWrapper filesWriterWrapper() { return  new FilesWriterWrapper();}
+
+    @Bean
+    public CustomerCLIByDayProcessor customerCLIByDayProcessor() { return new CustomerCLIByDayProcessor();}
 }

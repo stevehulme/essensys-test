@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.test.domain.CallInformation;
 import org.test.factory.CallInformationFactory;
+import org.test.service.CLI.CustomerCLIByDayProcessor;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -35,6 +36,9 @@ public class CallRaterProcessorTest {
     @Mock
     private CallInformationFactory callInformationFactory;
 
+    @Mock
+    private CustomerCLIByDayProcessor customerCLIByDayProcessor;
+
     @Captor
     private ArgumentCaptor<List<String>> output;
 
@@ -60,13 +64,15 @@ public class CallRaterProcessorTest {
 
         callRaterProcessor.processStream(streamOfLines);
 
-        verify(filesWriterWrapper, times(2)).writeFile(output.capture(), outputPath.capture());
+        verify(filesWriterWrapper, times(3)).writeFile(output.capture(), outputPath.capture());
 
         assertEquals(output.getAllValues().get(0), Arrays.asList(string1PlusCost));
         assertEquals(outputPath.getAllValues().get(0).toFile().getName(), "output.csv");
 
         assertEquals(output.getAllValues().get(1), Arrays.asList(string2));
         assertEquals(outputPath.getAllValues().get(1).toFile().getName(), "unmatched.csv");
+
+        assertEquals(outputPath.getAllValues().get(2).toFile().getName(), "customerCLI.csv");
     }
 
 
@@ -81,13 +87,16 @@ public class CallRaterProcessorTest {
 
         callRaterProcessor.processStream(streamOfLines);
 
-        verify(filesWriterWrapper, times(2)).writeFile(output.capture(), outputPath.capture());
+        verify(filesWriterWrapper, times(3)).writeFile(output.capture(), outputPath.capture());
 
         assertEquals(output.getAllValues().get(0), Arrays.asList(fileHeaderPlusCost));
         assertEquals(outputPath.getAllValues().get(0).toFile().getName(), "output.csv");
 
         assertEquals(output.getAllValues().get(1), Arrays.asList(fileHeader));
         assertEquals(outputPath.getAllValues().get(1).toFile().getName(), "unmatched.csv");
+
+        assertEquals(outputPath.getAllValues().get(2).toFile().getName(), "customerCLI.csv");
+
     }
 
 
