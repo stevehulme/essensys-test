@@ -7,11 +7,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.test.domain.CallInformation;
 import org.test.domain.CallInformationWithCost;
-import org.test.factory.CallInformationFactory;
 import org.test.factory.CallInformationWIthCostFactory;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,8 +25,6 @@ public class CallRaterRowProcessorTest {
     @Mock
     private CallInformationWIthCostFactory callInformationWIthCostFactory;
 
-    @Mock
-    private CallInformationWIthCostSerialiser callInformationWIthCostSerialiser;
 
     @InjectMocks
     private CallRaterRowProcessor callRaterRowProcessor;
@@ -36,22 +32,18 @@ public class CallRaterRowProcessorTest {
     @Test
     public void testProcessRow() {
 
-        String testString = "testString";
-        String expectedString = testString + "12.0";
         CallInformation callInformation = mock(CallInformation.class);
         BigDecimal cost = mock(BigDecimal.class);
         when(callCostCalculator.calculateCost(callInformation)).thenReturn(cost);
         CallInformationWithCost callInformationWithCost = mock(CallInformationWithCost.class);
         when(callInformationWIthCostFactory.create(callInformation, cost)).thenReturn(callInformationWithCost);
-        when(callInformationWIthCostSerialiser.toString(callInformationWithCost)).thenReturn(expectedString);
 
-        String returnedString = callRaterRowProcessor.processRow(callInformation);
+        CallInformationWithCost returnedCallInformationWithCost = callRaterRowProcessor.processCallInformation(callInformation);
 
-        assertEquals(expectedString, returnedString);
+        assertEquals(callInformationWithCost, returnedCallInformationWithCost);
 
         verify(callCostCalculator, times(1)).calculateCost(callInformation);
         verify(callInformationWIthCostFactory, times(1)).create(callInformation, cost);
-        verify(callInformationWIthCostSerialiser, times(1)).toString(callInformationWithCost);
     }
 
 }

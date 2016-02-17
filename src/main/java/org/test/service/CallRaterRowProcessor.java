@@ -17,16 +17,13 @@ public class CallRaterRowProcessor {
     @Autowired
     private CallInformationWIthCostFactory callInformationWIthCostFactory;
 
-    @Autowired
-    private CallInformationWIthCostSerialiser callInformationWIthCostSerialiser;
-
-    public String processRow(CallInformation callInformation) {
+    public CallInformationWithCost processCallInformation(CallInformation callInformation) {
 
         BigDecimal cost = callCostCalculator.calculateCost(callInformation);
 
-        CallInformationWithCost callInformationWithCost = callInformationWIthCostFactory.create(callInformation, cost);
+        return callInformationWIthCostFactory.create(callInformation, cost);
 
-        return callInformationWIthCostSerialiser.toString(callInformationWithCost);
+
 
     }
 }

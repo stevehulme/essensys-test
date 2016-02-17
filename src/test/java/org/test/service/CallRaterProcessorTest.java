@@ -8,15 +8,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.test.domain.CallInformation;
+import org.test.domain.CallInformationWithCost;
+import org.test.domain.CustomerCLIByDay;
 import org.test.factory.CallInformationFactory;
+import org.test.service.CLI.CustomerCLIByDayOutputGenerator;
 import org.test.service.CLI.CustomerCLIByDayProcessor;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -39,6 +41,12 @@ public class CallRaterProcessorTest {
     @Mock
     private CustomerCLIByDayProcessor customerCLIByDayProcessor;
 
+    @Mock
+    private CallInformationWIthCostSerialiser callInformationWIthCostSerialiser;
+
+    @Mock
+    private CustomerCLIByDayOutputGenerator customerCLIByDayOutputGenerator;
+
     @Captor
     private ArgumentCaptor<List<String>> output;
 
@@ -54,13 +62,19 @@ public class CallRaterProcessorTest {
         String string1 = "string1";
         String string1PlusCost = string1 + "+cost";
         String string2 = "string2";
+        String string3 = "string3";
 
         Stream<String> streamOfLines = Arrays.asList(string1, string2).stream();
 
         CallInformation callInformation = mock(CallInformation.class);
         when(callInformationFactory.create(string1)).thenReturn(Optional.of(callInformation));
         when(callInformationFactory.create(string2)).thenReturn(Optional.empty());
-        when(callRaterRowProcessor.processRow(callInformation)).thenReturn(string1PlusCost);
+        CallInformationWithCost callInformationWithCost = mock(CallInformationWithCost.class);
+        when(callRaterRowProcessor.processCallInformation(callInformation)).thenReturn(callInformationWithCost);
+        when(callInformationWIthCostSerialiser.toString(callInformationWithCost)).thenReturn(string1PlusCost);
+        Map<String, Map<String, CustomerCLIByDay>> infoMap = mock(Map.class);
+        when(customerCLIByDayProcessor.getCustomerCLIToCallInformationMap()).thenReturn(infoMap);
+        when(customerCLIByDayOutputGenerator.getResults(infoMap)).thenReturn(Arrays.asList(string3));
 
         callRaterProcessor.processStream(streamOfLines);
 
@@ -72,6 +86,7 @@ public class CallRaterProcessorTest {
         assertEquals(output.getAllValues().get(1), Arrays.asList(string2));
         assertEquals(outputPath.getAllValues().get(1).toFile().getName(), "unmatched.csv");
 
+        assertEquals(output.getAllValues().get(2), Arrays.asList(string3));
         assertEquals(outputPath.getAllValues().get(2).toFile().getName(), "customerCLI.csv");
     }
 
@@ -94,8 +109,6 @@ public class CallRaterProcessorTest {
 
         assertEquals(output.getAllValues().get(1), Arrays.asList(fileHeader));
         assertEquals(outputPath.getAllValues().get(1).toFile().getName(), "unmatched.csv");
-
-        assertEquals(outputPath.getAllValues().get(2).toFile().getName(), "customerCLI.csv");
 
     }
 

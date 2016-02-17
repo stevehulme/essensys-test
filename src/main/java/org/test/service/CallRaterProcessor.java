@@ -3,7 +3,9 @@ package org.test.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.test.domain.CallInformation;
+import org.test.domain.CallInformationWithCost;
 import org.test.factory.CallInformationFactory;
+import org.test.service.CLI.CustomerCLIByDayOutputGenerator;
 import org.test.service.CLI.CustomerCLIByDayProcessor;
 
 import java.io.IOException;
@@ -26,7 +28,13 @@ public class CallRaterProcessor {
     private CallInformationFactory callInformationFactory;
 
     @Autowired
+    private CallInformationWIthCostSerialiser callInformationWIthCostSerialiser;
+
+    @Autowired
     private CustomerCLIByDayProcessor customerCLIByDayProcessor;
+
+    @Autowired
+    CustomerCLIByDayOutputGenerator customerCLIByDayOutputGenerator;
 
     private List<String> success = new ArrayList<>();
     private List<String> failure = new ArrayList<>();
@@ -42,8 +50,7 @@ public class CallRaterProcessor {
         Optional<CallInformation> callInformation = callInformationFactory.create(rowFromFile);
 
         if (callInformation.isPresent()) {
-            success.add(callRaterRowProcessor.processRow(callInformation.get()));
-            customerCLIByDayProcessor.processRow(callInformation.get());
+            processSuccessfulRow(callInformation);
         } else {
             if (rowFromFile.startsWith("Customer")) {
                 success.add(rowFromFile + ", Cost");
@@ -52,9 +59,16 @@ public class CallRaterProcessor {
         }
     }
 
+    private void processSuccessfulRow(Optional<CallInformation> callInformation) {
+        CallInformationWithCost callInformationWithCost = callRaterRowProcessor.processCallInformation(callInformation.get());
+        success.add(callInformationWIthCostSerialiser.toString(callInformationWithCost));
+        customerCLIByDayProcessor.processCallInformationWithCost(callInformationWithCost);
+    }
+
     private void outputToFiles() throws IOException {
         filesWriterWrapper.writeFile(success, FileSystems.getDefault().getPath("output.csv"));
         filesWriterWrapper.writeFile(failure, FileSystems.getDefault().getPath("unmatched.csv"));
-        filesWriterWrapper.writeFile(customerCLIByDayProcessor.getResults(), FileSystems.getDefault().getPath("customerCLI.csv"));
+        List<String> customerCLIOutput = customerCLIByDayOutputGenerator.getResults(customerCLIByDayProcessor.getCustomerCLIToCallInformationMap());
+        filesWriterWrapper.writeFile(customerCLIOutput, FileSystems.getDefault().getPath("customerCLI.csv"));
     }
 }
